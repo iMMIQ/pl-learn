@@ -1,0 +1,14 @@
+_build/
+*.exe
+*.native
+*.byte
+*.cmi
+*.cmo
+*.cmx
+*.o
+*.a
+*.so
+*.dune-deps
+*.install
+*.merlin
+_dune/
