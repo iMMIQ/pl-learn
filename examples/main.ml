@@ -1,2 +1,3 @@
 let () =
-  Printf.printf "Run examples here\n"
+  Printf.printf "PL Learn - Examples\n";
+  Printf.printf "Run: dune exec lesson01_examples\n"

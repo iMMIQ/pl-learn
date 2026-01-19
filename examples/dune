@@ -2,3 +2,8 @@
  (name main)
  (public_name pl_learn_examples)
  (libraries pl_learn))
+
+(executable
+ (name lesson02_examples)
+ (public_name lesson02_examples)
+ (libraries lesson02))
