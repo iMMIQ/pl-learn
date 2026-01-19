@@ -1,0 +1,3 @@
+(library
+ (name pl_learn)
+ (public_name pl_learn.lib))

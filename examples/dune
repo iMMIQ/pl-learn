@@ -1,0 +1,4 @@
+(executable
+ (name main)
+ (public_name pl_learn_examples)
+ (libraries pl_learn))
