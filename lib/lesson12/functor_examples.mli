@@ -39,13 +39,14 @@ module type MakeSet = functor (E : Comparable) -> sig
 end
 
 (** [MakeHashTable] creates a hash table from a hashable key type *)
-module type MakeHashTable = functor (K : Hashable) -> sig
+module MakeHashTable : functor (K : Hashable) -> sig
   type key = K.t
   type 'a t
   val empty : unit -> 'a t
   val add : key -> 'a -> 'a t -> 'a t
   val find : key -> 'a t -> 'a option
-  val mem : key -> 'a t -> bool
+  val remove : key -> 'a t -> 'a t
+  val keys : 'a t -> key list
 end
 
 (** {1 Instantiations} *)
@@ -54,10 +55,13 @@ module IntComparable : Comparable with type t = int
 
 module StringComparable : Comparable with type t = string
 
+module IntHashable : Hashable with type t = int
+
 module IntSet : sig
   type elt = int
   type t
   val empty : t
+  val is_empty : t -> bool
   val add : elt -> t -> t
   val mem : elt -> t -> bool
   val to_list : t -> elt list
@@ -67,6 +71,7 @@ module StringSet : sig
   type elt = string
   type t
   val empty : t
+  val is_empty : t -> bool
   val add : elt -> t -> t
   val mem : elt -> t -> bool
   val to_list : t -> elt list
