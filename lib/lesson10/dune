@@ -1,3 +1,4 @@
 (library
  (name lesson10)
- (public_name pl_learn.lesson10))
+ (public_name pl_learn.lesson10)
+ (modules thunk lazy_eval))
