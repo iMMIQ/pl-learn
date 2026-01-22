@@ -1,4 +1,4 @@
 (library
  (name lesson09)
  (public_name pl_learn.lesson09)
- (modules heap mark_sweep))
+ (modules heap mark_sweep copying))
