@@ -3,4 +3,4 @@
  (public_name pl_learn_examples)
  (libraries pl_learn))
 
-(dirs lesson01 lesson02 lesson03 lesson04 lesson05 lesson06 lesson07 lesson08)
+(dirs lesson01 lesson02 lesson03 lesson04 lesson05 lesson06 lesson07 lesson08 lesson09)

@@ -12,6 +12,7 @@ Interactive Programming Language Theory course.
 6. [Type Inference](lesson06.md) - Hindley-Milner, unification, polymorphism
 7. [Abstract Machines](lesson07.md) - SECD machine, environment machine
 8. [Subtyping](lesson08.md) - Subtype relations, variance, record types
+9. [Garbage Collection](lesson09.md) - Mark-sweep, copying, generational GC
 
 ## Getting Started
 
