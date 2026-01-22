@@ -1,0 +1,3 @@
+(executable
+ (name lesson10_examples)
+ (libraries lesson10))
