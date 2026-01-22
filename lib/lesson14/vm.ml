@@ -47,8 +47,10 @@ let pop vm =
   vm.stack.(vm.sp)
 
 let peek vm n =
-  if vm.sp - 1 - n < 0 then failwith "Stack underflow";
-  vm.stack.(vm.sp - 1 - n)
+  (* n is the depth from the bottom of the current frame *)
+  (* Access from stack bottom: stack[n] *)
+  if n < 0 || n >= vm.sp then failwith "Stack underflow";
+  vm.stack.(n)
 
 (* {1 Instruction Execution} *)
 
@@ -114,7 +116,12 @@ let step vm =
          push vm (VBool b);
          vm.pc <- vm.pc + 1
      | RAccess depth ->
-         push vm (peek vm depth);
+         (* Access peeks at the value at depth and leaves it on stack *)
+         (* No push - the value is already there from let bindings *)
+         (* For primitives, this won't work as-is... *)
+         (* Actually, Access should duplicate the value for use *)
+         let v = peek vm depth in
+         push vm v;
          vm.pc <- vm.pc + 1
      | RClosure (addr, n) ->
          (* Capture current environment *)

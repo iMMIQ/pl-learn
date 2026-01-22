@@ -1,0 +1,4 @@
+(executable
+ (name examples)
+ (public_name pl_learn.lesson14_examples)
+ (libraries pl_learn.lesson14))

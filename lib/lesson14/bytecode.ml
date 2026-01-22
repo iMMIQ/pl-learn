@@ -89,10 +89,8 @@ let resolve_labels prog =
           | JmpIfZ target -> RJmpIfZ (fix_offset target)
           | Label lbl -> RLabel lbl
         in
-        (* Skip label placeholders in output *)
-        match fixed_instr with
-        | RLabel _ -> ()  (* Labels don't generate code *)
-        | _ -> instrs := fixed_instr :: !instrs;
+        (* Keep labels in output for VM to find entry points *)
+        instrs := fixed_instr :: !instrs;
         emit (curr + 1) rest
   in
   emit 0 prog;

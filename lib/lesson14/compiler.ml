@@ -21,8 +21,10 @@ let fresh_label ctx prefix =
   (label, ctx)
 
 let extend ctx vars =
-  let n = List.length ctx.env in
-  ctx.env <- List.map (fun v -> (v, n)) (List.rev vars) @ ctx.env;
+  (* New variables are prepended *)
+  (* The first new var is most recent, so it gets depth 0 (top of stack) *)
+  let new_env = List.mapi (fun i v -> (v, i)) (List.rev vars) in
+  ctx.env <- new_env @ List.map (fun (v, d) -> (v, d + List.length new_env)) ctx.env;
   ctx
 
 let lookup ctx var =
@@ -86,7 +88,7 @@ let rec compile_expr ctx e = match e with
         | Eq -> BEq | Lt -> BLt | Gt -> BGt
       in
       let op_instr = add_instr "" (Binop bop) [] in
-      (List.rev_append e1_code (List.rev_append e2_code op_instr), ctx)
+      (e1_code @ e2_code @ op_instr, ctx)
 
   | EIf (e1, e2, e3) ->
       let (e1_code, ctx) = compile_expr ctx e1 in
@@ -128,7 +130,7 @@ let compile_all_closures ctx prog =
 
     (* Add entry point label and body *)
     (entry_label, Label entry_label) ::
-    (List.rev_append body_code return_instr) @
+    (body_code @ return_instr) @
     prog
   ) prog ctx.closures
 
@@ -145,7 +147,5 @@ let compile e =
   (* Compile all closures *)
   let with_closures = compile_all_closures ctx main_with_halt in
 
-  (* Add main entry point *)
-  let with_entry = ("main", Label "main") :: with_closures in
-
-  List.rev with_entry
+  (* Add main entry point at the BEGINNING *)
+  ("main", Label "main") :: with_closures
