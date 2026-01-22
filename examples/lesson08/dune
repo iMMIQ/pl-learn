@@ -1,0 +1,4 @@
+(executable
+ (name examples)
+ (public_name lesson08_examples)
+ (libraries lesson08))

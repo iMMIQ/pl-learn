@@ -3,32 +3,4 @@
  (public_name pl_learn_examples)
  (libraries pl_learn))
 
-(executable
- (name lesson02_examples)
- (public_name lesson02_examples)
- (libraries lesson02))
-
-(executable
- (name lesson03_examples)
- (public_name lesson03_examples)
- (libraries lesson03))
-
-(executable
- (name lesson04_examples)
- (public_name lesson04_examples)
- (libraries lesson04))
-
-(executable
- (name lesson06_examples)
- (public_name lesson06_examples)
- (libraries lesson06))
-
-(executable
- (name lesson07_examples)
- (public_name lesson07_examples)
- (libraries lesson07))
-
-(executable
- (name lesson08_examples)
- (public_name lesson08_examples)
- (libraries lesson08))
+(dirs lesson01 lesson02 lesson03 lesson04 lesson05 lesson06 lesson07 lesson08)

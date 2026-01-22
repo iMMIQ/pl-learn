@@ -16,6 +16,11 @@ make test
 
 # Start REPL
 make repl
+
+# Run examples (by lesson)
+dune exec lesson01_examples
+dune exec lesson02_examples
+# ... etc
 ```
 
 ## Course Structure
@@ -28,6 +33,28 @@ make repl
 | 3 | Simply Typed λ-Calculus |
 | 4 | Operational Semantics |
 | 5 | Continuations |
+| 6 | Type Inference |
+| 7 | Abstract Machines |
+| 8 | Subtyping |
+| 9 | Garbage Collection |
+
+## Project Layout
+
+```
+pl-learn/
+├── bin/           # Main executable
+├── lib/           # Library code (by lesson)
+│   ├── lesson01/  # Arithmetic expressions
+│   ├── lesson02/  # Lambda calculus
+│   └── ...
+├── test/          # Test suites (by lesson)
+│   ├── lesson01/
+│   └── ...
+├── examples/      # Example programs (by lesson)
+│   ├── lesson01/
+│   └── ...
+└── docs/          # Documentation and plans
+```
 
 ## License
 

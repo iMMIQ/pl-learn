@@ -1,4 +1,4 @@
 (executable
- (name lesson01_examples)
+ (name examples)
  (public_name lesson01_examples)
  (libraries lesson01))

@@ -1,4 +1,4 @@
-open Lesson05_cps
+open Lesson05.Cps
 
 let () =
   Printf.printf "\n=== Lesson 05: Continuations and CPS ===\n\n";
