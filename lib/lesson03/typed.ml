@@ -68,8 +68,8 @@ let typecheck e = typeof (fun _ -> None) e
 (* {1 Evaluation} *)
 
 let rec eval = function
-  | TmApp (TmAbs (_, _, body), arg) ->
-      eval (subst 0 arg body)
+  | TmApp (TmAbs (x, _, body), arg) ->
+      eval (subst x arg body)
   | TmApp (e1, e2) ->
       TmApp (eval e1, eval e2)
   | TmIf (TmTrue, e2, _) -> eval e2
@@ -80,19 +80,19 @@ let rec eval = function
   | TmIsZero e -> TmIsZero (eval e)
   | e -> e
 
-and subst i value = function
-  | TmVar (x, _) when x = "_" && i = 0 -> value
+and subst var value = function
+  | TmVar (x, _ty) when x = var -> value
   | TmVar (x, ty) -> TmVar (x, ty)
   | TmAbs (x, ty, body) ->
-      TmAbs (x, ty, if x = "_" then subst (i + 1) value body else body)
-  | TmApp (e1, e2) -> TmApp (subst i value e1, subst i value e2)
+      TmAbs (x, ty, if x = var then body else subst var value body)
+  | TmApp (e1, e2) -> TmApp (subst var value e1, subst var value e2)
   | TmTrue -> TmTrue
   | TmFalse -> TmFalse
-  | TmIf (e1, e2, e3) -> TmIf (subst i value e1, subst i value e2, subst i value e3)
+  | TmIf (e1, e2, e3) -> TmIf (subst var value e1, subst var value e2, subst var value e3)
   | TmZero -> TmZero
-  | TSucc e -> TSucc (subst i value e)
-  | TPred e -> TPred (subst i value e)
-  | TmIsZero e -> TmIsZero (subst i value e)
+  | TSucc e -> TSucc (subst var value e)
+  | TPred e -> TPred (subst var value e)
+  | TmIsZero e -> TmIsZero (subst var value e)
 
 (* {1 Pretty Printing} *)
 
