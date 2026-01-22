@@ -54,6 +54,9 @@ val resolve_labels : program -> resolved_instr array
 (** [emit instr] formats an instruction as a string *)
 val emit : instr -> string
 
+(** [emit_resolved instr] formats a resolved instruction as a string *)
+val emit_resolved : resolved_instr -> string
+
 (** [disassemble code] prints bytecode as human-readable text *)
 val disassemble : resolved_instr array -> string
 
