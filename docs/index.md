@@ -11,6 +11,7 @@ Interactive Programming Language Theory course.
 5. [Continuations and CPS](lesson05.md) - Control operators, CPS transformation
 6. [Type Inference](lesson06.md) - Hindley-Milner, unification, polymorphism
 7. [Abstract Machines](lesson07.md) - SECD machine, environment machine
+8. [Subtyping](lesson08.md) - Subtype relations, variance, record types
 
 ## Getting Started
 
