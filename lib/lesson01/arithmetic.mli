@@ -18,3 +18,15 @@ val run : expr -> int
 
 val string_of_expr : expr -> string
 val pp_expr : Format.formatter -> expr -> unit
+
+(** {1 Parsing} *)
+
+type token =
+  | TINT of int
+  | TPLUS | TMUL
+  | TLPAREN | TRPAREN
+  | TLET | TIN | TIDENT of string
+  | TEOF
+
+val parse : string -> expr
+exception Syntax_error of string

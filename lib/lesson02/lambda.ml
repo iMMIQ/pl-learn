@@ -46,16 +46,39 @@ let rec subst x e = function
 (* {1 Beta Reduction} *)
 
 let rec reduce_one strategy = function
-  | Var _ | Abs _ -> None
+  | Var _ -> None
+  | Abs (x, body) ->
+      (* Try to reduce inside the body *)
+      (match reduce_one strategy body with
+       | Some body' -> Some (Abs (x, body'))
+       | None -> None)
   | App (Abs (x, body), arg) ->
-      Some (subst x arg body)
+      (* Found a beta-redex *)
+      (match strategy with
+       | Normal_order -> Some (subst x arg body)
+       | Applicative_order ->
+           (* For applicative order, first try to reduce arg *)
+           match reduce_one strategy arg with
+           | Some arg' -> Some (App (Abs (x, body), arg'))
+           | None -> Some (subst x arg body))
   | App (e1, e2) ->
-      (match reduce_one strategy e1 with
-       | Some e1' -> Some (App (e1', e2))
-       | None ->
-           match reduce_one strategy e2 with
+      match strategy with
+      | Normal_order ->
+          (* Reduce leftmost first *)
+          (match reduce_one strategy e1 with
+           | Some e1' -> Some (App (e1', e2))
+           | None ->
+               match reduce_one strategy e2 with
+               | Some e2' -> Some (App (e1, e2'))
+               | None -> None)
+      | Applicative_order ->
+          (* Reduce argument first (rightmost), then function *)
+          (match reduce_one strategy e2 with
            | Some e2' -> Some (App (e1, e2'))
-           | None -> None)
+           | None ->
+               match reduce_one strategy e1 with
+               | Some e1' -> Some (App (e1', e2))
+               | None -> None)
 
 let normalize ?(strategy=Normal_order) ?(max_steps=10000) e =
   let rec step e count =
@@ -96,20 +119,36 @@ let church_mul =
   Abs ("m", Abs ("n", Abs ("f",
     App (Var "m", App (Var "n", Var "f")))))
 
-let rec int_to_church n =
-  if n <= 0 then church_zero
-  else App (church_succ, int_to_church (n - 1))
+let int_to_church n =
+  (* Build Church numeral directly in normal form.
+     Use unique bound variable names to avoid capture with church_add/mul.
+     Church numeral n = λf. λx. f (f (... (f x)...)) with n applications of f *)
+  let rec build_f_apps n x =
+    if n <= 0 then x
+    else App (Var "f", build_f_apps (n - 1) x)
+  in
+  Abs ("f", Abs ("x", build_f_apps n (Var "x")))
 
 let church_to_int e =
-  match normalize ~max_steps:1000
-        (App (App (e, Abs ("n", Abs ("x", App (Var "x", Var "n")))),
-              Abs ("_", Var "_"))) with
+  (* First normalize the expression, then count the function applications *)
+  match normalize ~max_steps:1000 e with
   | None -> None
   | Some e' ->
+      (* Count the number of function applications in Church numeral form
+         Church n = λf. λx. f (f (... (f x)...)) with n applications of f *)
       let rec count = function
-        | App (Abs ("_", Var "_"), _) -> 0
-        | App (Abs (_, App (Var "x", Var "n")), rest) -> 1 + count rest
-        | _ -> -1
+        | Abs (_, Abs (_, Var _)) -> 0
+        | Abs (_, Abs (_, body)) ->
+            (* body is of form f (f (... (f x)...)) *)
+            let rec count_apps = function
+              | Var "x" | Var "z" -> 0
+              | App (Var v, inner) when v = "f" || v = "s" -> 1 + count_apps inner
+              | App (e1, e2) -> max (count_apps e1) (count_apps e2)
+              | _ -> 0
+            in
+            count_apps body
+        | Abs (_, body) -> count body
+        | _ -> 0
       in
       try Some (count e') with _ -> None
 
