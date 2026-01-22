@@ -1,4 +1,4 @@
 (library
  (name lesson11)
  (public_name pl_learn.lesson11)
- (modules adt pattern))
+ (modules adt pattern examples))
