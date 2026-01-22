@@ -1,3 +1,4 @@
 (library
  (name lesson06)
- (public_name pl_learn.lesson06))
+ (public_name pl_learn.lesson06)
+ (modules types unify))
