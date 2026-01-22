@@ -22,3 +22,8 @@
  (name lesson06_examples)
  (public_name lesson06_examples)
  (libraries lesson06))
+
+(executable
+ (name lesson07_examples)
+ (public_name lesson07_examples)
+ (libraries lesson07))

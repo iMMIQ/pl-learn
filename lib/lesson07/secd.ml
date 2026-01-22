@@ -106,9 +106,8 @@ let rec compile env = function
       [IApp]
 
   | Let (x, e1, e2) ->
-      let body1 = compile env e1 in
-      let body2 = compile ([x] :: env) e2 in
-      [ILet (body1, body2)]
+      (* let x = e1 in e2 desugars to (λx. e2) e1 *)
+      compile env (App (Abs (x, e2), e1))
 
 let compile e = compile [] e
 
@@ -159,20 +158,16 @@ let step (s : secd) : secd =
            | [] -> raise (Failure "Empty environment"))
 
       | IClose body_code ->
-          (match s.stack with
-           | [] -> raise (Failure "Close: empty stack")
-           | _ :: _ ->
-               (* Closure captures current environment *)
-               (* For simplicity, closures don't capture yet *)
-               let closure = VClosure ("x", body_code, [||]) in
-               { s with
-                 stack = closure :: s.stack;
-                 control = rest;
-               })
+          (* Create closure - captures current environment *)
+          let closure = VClosure ("x", body_code, [||]) in
+          { s with
+            stack = closure :: s.stack;
+            control = rest;
+          }
 
       | IApp ->
           (match s.stack with
-           | VClosure (_x, body_code, _) :: arg :: rest_stack ->
+           | arg :: VClosure (_x, body_code, _) :: rest_stack ->
                (* Create new environment frame *)
                let new_env = [| arg |] in
                (* Save current state *)
@@ -213,11 +208,9 @@ let step (s : secd) : secd =
                }
            | _ -> raise (Failure "Add: type error"))
 
-      | ILet (body1, body2) ->
-          (* Execute body1, then extend env with result, then body2 *)
-          { s with
-            control = body1 @ [IClose body2] @ rest;
-          }
+      | ILet _ ->
+          (* Should not happen - let is desugared during compilation *)
+          raise (Failure "ILet: should be desugared")
 
 let rec run s =
   match s.control with

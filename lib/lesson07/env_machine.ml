@@ -38,7 +38,9 @@ let rec compile = function
   | Add (e1, e2) -> compile e1 @ compile e2 @ [IAdd]
   | Abs (x, e) -> [IAbs (x, compile e)]
   | App (e1, e2) -> compile e1 @ compile e2 @ [IApp]
-  | Let (x, e1, e2) -> [ILet (x, compile e1, compile e2)]
+  | Let (x, e1, e2) ->
+      (* let x = e1 in e2  desugars to  (λx. e2) e1 *)
+      compile (App (Abs (x, e2), e1))
 
 (* {1 Environment Operations} *)
 
@@ -84,11 +86,15 @@ let step_state s =
 
       | IApp ->
           (match s.stack with
-           | VClos clos :: arg :: rest_stack ->
+           | arg :: VClos clos :: _rest_stack ->
+               (* Execute function body with extended environment *)
+               (* Start with empty stack - body will push result *)
+               (* After body completes, result will be on stack *)
+               (* Then continue with rest of instructions *)
                {
-                 code = clos.body @ [IAbs (clos.param, [])] @ rest;
+                 code = clos.body @ rest;
                  env = env_extend clos.param arg clos.env;
-                 stack = rest_stack;
+                 stack = [];
                }
            | _ -> raise (Failure "App: type error"))
 
@@ -101,10 +107,9 @@ let step_state s =
                }
            | _ -> raise (Failure "Add: type error"))
 
-      | ILet (x, e1, e2) ->
-          { s with
-            code = e1 @ [IAbs (x, e2)] @ rest;
-          }
+      | ILet _ ->
+          (* Should not happen - let is desugared during compilation *)
+          raise (Failure "ILet: should be desugared")
 
 let rec eval_state s =
   match s.code with
