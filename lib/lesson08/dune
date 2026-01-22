@@ -1,3 +1,4 @@
 (library
  (name lesson08)
- (public_name pl_learn.lesson08))
+ (public_name pl_learn.lesson08)
+ (modules subtype typed))
