@@ -7,3 +7,8 @@
  (name lesson02_examples)
  (public_name lesson02_examples)
  (libraries lesson02))
+
+(executable
+ (name lesson03_examples)
+ (public_name lesson03_examples)
+ (libraries lesson03))
