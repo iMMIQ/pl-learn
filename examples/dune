@@ -12,3 +12,8 @@
  (name lesson03_examples)
  (public_name lesson03_examples)
  (libraries lesson03))
+
+(executable
+ (name lesson04_examples)
+ (public_name lesson04_examples)
+ (libraries lesson04))
