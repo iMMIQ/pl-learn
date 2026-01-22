@@ -9,6 +9,7 @@ Interactive Programming Language Theory course.
 3. [Simply Typed λ-Calculus](lesson03.md) - Type checking, type safety
 4. [Operational Semantics](lesson04.md) - Small-step and big-step semantics
 5. [Continuations and CPS](lesson05.md) - Control operators, CPS transformation
+6. [Type Inference](lesson06.md) - Hindley-Milner, unification, polymorphism
 
 ## Getting Started
 

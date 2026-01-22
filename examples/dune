@@ -17,3 +17,8 @@
  (name lesson04_examples)
  (public_name lesson04_examples)
  (libraries lesson04))
+
+(executable
+ (name lesson06_examples)
+ (public_name lesson06_examples)
+ (libraries lesson06))
