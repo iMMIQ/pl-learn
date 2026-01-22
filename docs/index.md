@@ -8,6 +8,7 @@ Interactive Programming Language Theory course.
 2. [Lambda Calculus](lesson02.md) - β-reduction, Church encodings
 3. [Simply Typed λ-Calculus](lesson03.md) - Type checking, type safety
 4. [Operational Semantics](lesson04.md) - Small-step and big-step semantics
+5. [Continuations and CPS](lesson05.md) - Control operators, CPS transformation
 
 ## Getting Started
 
