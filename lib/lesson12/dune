@@ -1,3 +1,4 @@
 (library
  (name lesson12)
- (public_name pl_learn.lesson12))
+ (public_name pl_learn.lesson12)
+ (modules module_system functor_mod))
