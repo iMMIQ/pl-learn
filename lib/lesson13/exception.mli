@@ -3,7 +3,9 @@
 (** {1 Maybe Monad} *)
 
 (** The Maybe monad represents computations that can fail *)
-type 'a maybe
+type 'a maybe =
+  | Just of 'a
+  | Nothing
 
 [@@@warning "-32"]
 
@@ -16,7 +18,9 @@ val to_option : 'a maybe -> 'a option
 (** {1 Exception Monad} *)
 
 (** The Exception monad represents computations that can fail with an error *)
-type ('e, 'a) result
+type ('e, 'a) result =
+  | Ok of 'a
+  | Error of 'e
 
 val return : 'a -> ('e, 'a) result
 val bind : ('e, 'a) result -> ('a -> ('e, 'b) result) -> ('e, 'b) result
