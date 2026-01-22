@@ -1,0 +1,98 @@
+open Lesson09_heap
+
+(* {1 Semi-Space Representation} *)
+
+type semispace = {
+  mutable objects : obj option array;
+  mutable alloc_ptr : int;
+}
+
+type copying_heap = {
+  mutable from_space : semispace;
+  mutable to_space : semispace;
+  mutable active_from : bool;
+}
+
+(* {1 Heap Creation} *)
+
+let create_copying_heap () =
+  let half_size = max_objects / 2 in
+  {
+    from_space = {
+      objects = Array.make half_size None;
+      alloc_ptr = 0;
+    };
+    to_space = {
+      objects = Array.make half_size None;
+      alloc_ptr = 0;
+    };
+    active_from = true;
+  }
+
+(* {1 Object Copying} *)
+
+let copy_into_space space obj =
+  if space.alloc_ptr >= Array.length space.objects then
+    None
+  else
+    let new_obj = {
+      hdr = { marked = false; size = obj.hdr.size; tag = obj.hdr.tag };
+      data = Array.copy obj.data;
+      forward = None;
+    } in
+    space.objects.(space.alloc_ptr) <- Some new_obj;
+    space.alloc_ptr <- space.alloc_ptr + 1;
+    (* Set forward pointer in original object *)
+    obj.forward <- Some new_obj;
+    Some new_obj
+
+let copy_obj h obj =
+  match obj.forward with
+  | Some new_obj -> new_obj  (* Already copied *)
+  | None ->
+      (* Copy to to-space *)
+      match copy_into_space h.to_space obj with
+      | Some new_obj ->
+          (* Update references in copied object *)
+          Array.iteri (fun i _ ->
+            match new_obj.data.(i) with
+            | VClosure (x, env) ->
+                (* Update environment references *)
+                let new_env = List.map (function
+                  | VInt _ | VBool _ | VUnit as v -> v
+                  | VClosure _ as v -> v  (* Simplified *)
+                ) env in
+                new_obj.data.(i) <- VClosure (x, new_env)
+            | _ -> ()
+          ) new_obj.data;
+          new_obj
+      | None -> failwith "To-space full"
+
+(* {1 Collection} *)
+
+let copy_scan h roots =
+  (* Copy roots *)
+  List.iter (fun obj -> ignore (copy_obj h obj)) roots;
+
+  (* Scan and update references *)
+  (* In a real implementation, we'd use a worklist here *)
+  ()
+
+let swap_spaces h =
+  (* Swap from and to *)
+  let temp = h.from_space in
+  h.from_space <- h.to_space;
+  h.to_space <- temp;
+
+  (* Clear to-space (now from-space) *)
+  for i = 0 to Array.length h.to_space.objects - 1 do
+    h.to_space.objects.(i) <- None
+  done;
+  h.to_space.alloc_ptr <- 0;
+
+  h.active_from <- not h.active_from
+
+let copying_collect h roots =
+  copy_scan h roots;
+  swap_spaces h;
+  h.from_space.alloc_ptr  (* Return count of live objects *)
